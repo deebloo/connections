@@ -1,47 +1,49 @@
-const cells = document.querySelector(".connections");
+const connections = document.querySelector(".connections");
 
-if (!cells) {
-  throw new Error("its broken");
+const guess = document.getElementById("guess");
+
+if (!connections || !guess) {
+  throw new Error("");
 }
 
-let selected: HTMLButtonElement[] = [];
-
-cells.addEventListener("click", (e) => {
+connections.addEventListener("click", (e) => {
   if (e.target instanceof HTMLButtonElement) {
     if (e.target.classList.contains("connections-cell")) {
-      if (selected.length < 4) {
-        e.target.classList.add("active");
-
-        selected.push(e.target);
-      }
+      e.target.classList.add("active");
     }
   }
 });
 
 let insertRef: Element | null = null;
 
-document.addEventListener("click", (e) => {
-  if (e.target instanceof HTMLButtonElement) {
-    if (e.target.id === "guess") {
-      const bgColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+guess.addEventListener("click", (e) => {
+  const bgColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
-      document.startViewTransition(() => {
-        for (const el of selected) {
-          if (!insertRef) {
-            cells.prepend(el);
-          } else {
-            insertRef.insertAdjacentElement("afterend", el);
-          }
+  const activeCells = document.querySelectorAll<HTMLElement>(
+    ".connections-cell.active",
+  );
 
-          insertRef = el;
-
-          el.style.backgroundColor = bgColor;
-
-          el.classList.remove("active");
-        }
-
-        selected = [];
-      });
+  document.startViewTransition(() => {
+    for (const cell of activeCells) {
+      cell.classList.remove("active");
     }
-  }
+
+    for (const cell of activeCells) {
+      if (!insertRef) {
+        insertRef = connections.firstElementChild;
+      }
+
+      if (insertRef) {
+        const sibling1 = cell.nextSibling;
+        const sibling2 = insertRef.nextSibling;
+
+        connections.insertBefore(insertRef, sibling1);
+        connections.insertBefore(cell, sibling2);
+      }
+
+      insertRef = cell.nextElementSibling;
+
+      cell.style.backgroundColor = bgColor;
+    }
+  });
 });

@@ -29,12 +29,14 @@
     .connections {
       display: grid;
       grid-template-columns: repeat(4, minmax(100px, 1fr));
-      gap: 1rem;
+      margin: 0 -0.25rem;
     }
 
     .connections-cell {
+      background: lightgray;
+      margin: .25rem;
       padding: 1rem;
-      border: solid 1px gray;
+      border: none;
       border-radius: 4px;
       cursor: pointer;
       view-transition-class: cell;
@@ -72,50 +74,7 @@
 
   <button id="guess">Guess</button>
 
-  <script type="module">
-    const cells = document.querySelector(".connections");
-    const guess = document.getElementById("guess")
-
-    let selected = [];
-
-    cells.addEventListener("click", (e) => {
-      if (e.target instanceof HTMLButtonElement) {
-        if (e.target.classList.contains("connections-cell")) {
-          if (selected.length < 4) {
-            e.target.classList.add("active");
-
-            selected.push(e.target);
-          }
-        }
-      }
-    });
-
-    let insertRef = null;
-
-    guess.addEventListener("click", (e) => {
-      const bgColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-
-      for (const el of selected) {
-        el.classList.remove("active");
-      }
-
-      document.startViewTransition(() => {
-        for (const el of selected) {
-          if (!insertRef) {
-            cells.prepend(el);
-          } else {
-            insertRef.insertAdjacentElement("afterend", el);
-          }
-
-          insertRef = el;
-
-          el.style.backgroundColor = bgColor;
-        }
-
-        selected = [];
-      });
-    });
-  </script>
+  <script type="module" src="target/main.js"></script>
 </body>
 
 </html>
